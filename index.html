@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebStore Pro & Arbys Bot</title>
+    <style>
+        :root {
+            --bg: #101012; --panel: #1a1a1d; --primary: #ff4081; --primary-hover: #f50057;
+            --text: #e0e0e0; --danger: #ef5350; --success: #26a69a; --accent: #ffd700;
+            --shadow: 0 8px 30px rgba(0,0,0,0.6);
+            /* Arbys Bot Renkleri */
+            --bot-bg: #222228; --bot-msg: #3a3a45; --user-msg: #ff4081;
+        }
+        body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', 'Segoe UI', sans-serif; overflow-x: hidden; }
+        .hidden { display: none !important; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 30px; }
+        
+        /* Gelişmiş Auth Ekranı */
+        #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; background: radial-gradient(circle, #2a2a30 0%, #101012 100%); }
+        .auth-box { background: var(--panel); padding: 50px; border-radius: 15px; box-shadow: var(--shadow); text-align: center; width: 350px; border: 1px solid #333; transform: scale(1); transition: 0.3s; }
+        .auth-box:hover { transform: scale(1.02); }
+        .auth-box h2 { color: var(--primary); margin-bottom: 30px; font-weight: 600; }
+        input, textarea { width: 100%; padding: 12px 15px; margin: 12px 0; background: #252529; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box; font-size: 1rem; transition: 0.2s; }
+        input:focus, textarea:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 10px rgba(255,64,129,0.3); }
+        button { background: var(--primary); color: white; border: none; padding: 12px 20px; margin: 10px 0; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; font-size: 1rem; transition: all 0.3sEase; text-transform: uppercase; letter-spacing: 1px; }
+        button:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,64,129,0.4); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-secondary { background: #333; color: #ccc; }
+        .btn-secondary:hover { background: #444; color: white; }
+        .btn-success { background: var(--success); }
+        .btn-danger { background: var(--danger); }
+
+        /* Modern Uygulama Düzeni */
+        header { background: var(--panel); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .coin-display { display: flex; align-items: center; gap: 12px; font-size: 1.3rem; font-weight: bold; color: var(--accent); background: rgba(255,215,0,0.1); padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.2); }
+        .coin-add-btn { background: var(--success); color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 1.6rem; line-height: 1; padding: 0; margin: 0; border: none; transition: 0.2s; }
+        .coin-add-btn:hover { background: #2bbbad; transform: rotate(90deg); }
+        nav { display: flex; gap: 15px; }
+        nav button { width: auto; margin: 0; padding: 10px 18px; text-transform: none; background: transparent; color: #aaa; }
+        nav button:hover { background: rgba(255,255,255,0.05); color: white; transform: none; box-shadow: none; }
+        nav button.active { color: var(--primary); border-bottom: 2px solid var(--primary); border-radius: 0; }
+
+        /* Şık Ürün Kartları ve Efektler */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-top: 30px; }
+        .card { background: var(--panel); border-radius: 12px; padding: 20px; text-align: center; border: 1px solid #333; box-shadow: var(--shadow); transition: all 0.4s ease; overflow: hidden; position: relative; cursor: pointer; }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); border-color: #444; }
+        .card::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); transition: 0.5s; }
+        .card:hover::after { left: 100%; }
+        .card img { max-width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; transition: 0.3s; }
+        .card:hover img { transform: scale(1.03); }
+        .card h3 { margin: 10px 0 8px 0; font-size: 1.2rem; font-weight: 600; color: white; }
+        
+        /* Stok Rozeti */
+        .stock-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); padding: 5px 10px; border-radius: 5px; font-size: 0.85rem; border: 1px solid #555; z-index: 5; font-weight: 600; }
+        .stock-out { color: var(--danger); border-color: var(--danger); }
+
+        /* Açıklama Sınırlama ve Bağlantı Stili */
+        .card-desc-wrapper { position: relative; margin-bottom: 15px; }
+        .card-desc { color: #aaa; font-size: 0.9rem; line-height: 1.5; margin: 0; }
+        .read-more-link { color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: none; transition: 0.2s; display: inline-block; margin-top: 5px; font-size: 0.9rem; }
+        .read-more-link:hover { color: var(--primary-hover); text-shadow: 0 0 8px rgba(255,64,129,0.5); }
+
+        .price { color: var(--accent); font-weight: bold; font-size: 1.4rem; margin-bottom: 15px; }
+        .card button { width: auto; padding: 10px 25px; margin: 0; }
+
+        /* Gelişmiş Modallar */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(5px); }
+        .modal.open { opacity: 1; visibility: visible; }
+        .modal-content { background: var(--panel); padding: 35px; border-radius: 15px; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; border: 1px solid #444; transform: translateY(-20px); transition: 0.3s; box-shadow: var(--shadow); position: relative; }
+        .modal.open .modal-content { transform: translateY(0); }
+        .close-btn { position: absolute; top: 15px; right: 20px; cursor: pointer; font-size: 1.8rem; color: #666; transition: 0.2s; z-index: 10; }
+        .close-btn:hover { color: var(--danger); transform: rotate(90deg); }
+        .modal h2 { margin-top: 0; color: white; border-bottom: 1px solid #333; padding-bottom: 15px; }
+
+        /* Ürün Detay Modalı Özellikleri */
+        #product-detail-modal .modal-content { max-width: 700px; padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+        .modal-header-img { width: 100%; height: 300px; object-fit: cover; }
+        .modal-body { padding: 30px; }
+        .modal-body h2 { border: none; padding: 0; margin-bottom: 10px; }
+        .modal-body .full-desc { color: #ccc; line-height: 1.7; margin-bottom: 20px; }
+        .modal-body .price { font-size: 1.8rem; margin-bottom: 20px; }
+        .modal-footer { padding: 20px 30px; background: rgba(0,0,0,0.2); border-top: 1px solid #333; text-align: right; }
+
+        /* Arbys Bot Chat Modalı */
+        #chat-box { background: var(--bot-bg); height: 350px; border-radius: 10px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; border: 1px solid #333; }
+        .msg { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 0.95rem; line-height: 1.4; }
+        .msg.bot { background: var(--bot-msg); color: white; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .msg.user { background: var(--user-msg); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .bot-actions { display: flex; gap: 10px; }
+
+        /* Admin Dashboard */
+        .admin-section { background: var(--panel); padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; color: #ccc; }
+        th { color: white; font-weight: 600; }
+        .admin-row-actions { display: flex; gap: 5px; }
+        
+        #announcement-banner { background: var(--primary); color: white; text-align: center; padding: 12px; font-weight: 600; display: none; position: relative; z-index: 101; letter-spacing: 0.5px; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen">
+        <div class="auth-box">
+            <h2>WebStore Giriş</h2>
+            <input type="text" id="auth-user" placeholder="Kullanıcı Adı">
+            <input type="password" id="auth-pass" placeholder="Şifre">
+            <button onclick="login()">Giriş Yap</button>
+            <button onclick="register()" class="btn-secondary">Kayıt Ol</button>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="app-screen" class="hidden">
+        <div id="announcement-banner"></div>
+        <header>
+            <div style="display:flex; align-items:center; gap:20px;">
+                <span id="welcome-text" style="font-weight:600; color:white;"></span>
+                <nav>
+                    <button onclick="switchTab('store')" id="nav-store" class="active">Mağaza</button>
+                    <button onclick="switchTab('inventory')" id="nav-inventory">Envanter</button>
+                    <button id="nav-admin" class="hidden btn-danger" onclick="switchTab('admin')" style="color:var(--danger)">Admin Panel</button>
+                </nav>
+            </div>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <!-- Arbys Bot Butonu -->
+                <button onclick="openArbysModal()" style="background:#6a1b9a; width:auto; padding:8px 15px; text-transform:none; margin:0;">🤖 Arbys Bot</button>
+                <button onclick="openModal('promo-modal')" style="background: var(--success); width:auto; padding:8px 15px; text-transform:none; margin:0;">Promo Kod</button>
+                <div class="coin-display">
+                    <span id="user-coins">0</span> Coin
+                    <button class="coin-add-btn" onclick="openModal('coin-modal')">+</button>
+                </div>
+                <button onclick="logout()" class="btn-secondary" style="width:auto; padding:8px 15px; margin:0; text-transform:none;">Çıkış</button>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Store -->
+            <div id="tab-store">
+                <div id="store-grid" class="grid"></div>
+            </div>
+
+            <!-- Inventory -->
+            <div id="tab-inventory" class="hidden">
+                <h2 style="color:white;">Envanterim</h2>
+                <div id="inventory-grid" class="grid"></div>
+            </div>
+
+            <!-- Admin Panel -->
+            <div id="tab-admin" class="hidden">
+                <h2 style="color:white;">Yönetim Paneli</h2>
+                
+                <div class="admin-section">
+                    <h3>Ürün Ekle</h3>
+                    <input type="text" id="add-prod-name" placeholder="Ürün Adı">
+                    <input type="text" id="add-prod-desc" placeholder="Açıklama (Uzun yazabilirsiniz, otomatik kısalır)">
+                    
+                    <div style="display:flex; gap:10px; margin: 12px 0;">
+                        <input type="number" id="add-prod-price" placeholder="Fiyat (Coin)" style="margin:0; flex:1;">
+                        <input type="number" id="add-prod-stock" placeholder="Stok Adedi" style="margin:0; flex:1;">
+                        <label style="display:flex; align-items:center; gap:5px; color:#aaa; background:#252529; padding:0 15px; border-radius:8px; border:1px solid #444;">
+                            <input type="checkbox" id="add-prod-stock-inf" style="width:auto; margin:0;"> Sınırsız
+                        </label>
+                    </div>
+
+                    <div style="display:flex; gap:10px; margin: 12px 0;">
+                        <input type="text" id="add-prod-botcode" placeholder="6 Haneli Bot Kodu (Örn: 123456)" maxlength="6" style="margin:0; flex:1;">
+                        <input type="text" id="add-prod-botq" placeholder="Bot Kullanıcıya Ne Soracak?" style="margin:0; flex:2;">
+                    </div>
+
+                    <input type="file" id="add-prod-img" accept="image/*">
+                    <button onclick="adminAddProduct()">Ekle</button>
+                </div>
+
+                <div class="admin-section">
+                    <h3>Bot Yanıtları (Gelenler)</h3>
+                    <table>
+                        <thead><tr><th>Kullanıcı</th><th>Ürün</th><th>Kod</th><th>Yanıt</th><th>Tarih</th></tr></thead>
+                        <tbody id="admin-bot-responses"></tbody>
+                    </table>
+                </div>
+
+                <div class="admin-section">
+                    <h3>Mevcut Ürünler</h3>
+                    <div id="admin-products-list"></div>
+                </div>
+
+                <div style="display:flex; gap:20px;">
+                    <div class="admin-section" style="flex:1;">
+                        <h3>Coin Paketleri</h3>
+                        <input type="text" id="add-pkg-name" placeholder="Paket Adı (Örn: 50 TL)">
+                        <input type="number" id="add-pkg-coin" placeholder="Verilecek Coin">
+                        <button onclick="adminAddCoinPackage()">Paket Ekle</button>
+                        <div id="admin-packages-list" style="margin-top:15px;"></div>
+                    </div>
+
+                    <div class="admin-section" style="flex:1;">
+                        <h3>Promosyon Kodları</h3>
+                        <input type="text" id="add-promo-code" placeholder="Kod (Örn: MEGA2026)">
+                        <input type="number" id="add-promo-reward" placeholder="Coin Ödülü">
+                        <button onclick="adminAddPromo()">Kod Ekle</button>
+                        <div id="admin-promo-list" style="margin-top:15px;"></div>
+                    </div>
+                </div>
+
+                <div class="admin-section">
+                    <h3>Site Duyurusu</h3>
+                    <input type="text" id="add-announcement" placeholder="Duyuru metni...">
+                    <button onclick="adminSetAnnouncement()">Yayınla</button>
+                </div>
+
+                <div class="admin-section">
+                    <h3>Kullanıcı Yönetimi</h3>
+                    <table>
+                        <thead><tr><th>Kullanıcı</th><th>Coin</th><th>İşlemler</th></tr></thead>
+                        <tbody id="admin-users-list"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="coin-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('coin-modal')">&times;</span>
+            <h2 style="padding-right: 30px;">Coin Satın Al</h2>
+            <div id="coin-packages-grid" class="grid"></div>
+        </div>
+    </div>
+
+    <div id="promo-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('promo-modal')">&times;</span>
+            <h2 style="padding-right: 30px;">Promo Kodu Kullan</h2>
+            <input type="text" id="promo-input" placeholder="Kodu Buraya Girin">
+            <button onclick="redeemPromo()">Kullan</button>
+        </div>
+    </div>
+
+    <!-- Ürün Detay Modalı (Senin Korumak İstediğin Modal) -->
+    <div id="product-detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('product-detail-modal')" style="background:rgba(0,0,0,0.5); padding:5px 10px; border-radius:50%; color:white;">&times;</span>
+            <img src="" alt="" class="modal-header-img" id="md-img">
+            <div class="modal-body">
+                <h2 id="md-name"></h2>
+                <div class="price"><span id="md-price">0</span> Coin</div>
+                <p class="full-desc" id="md-desc"></p>
+            </div>
+            <div class="modal-footer" id="md-footer">
+                <!-- Satın al butonu JS ile buraya eklenecek -->
+            </div>
+        </div>
+    </div>
+
+    <!-- YENİ: Arbys Bot Modalı -->
+    <div id="arbys-modal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="closeArbys()">&times;</span>
+            <h2 style="color:var(--primary); margin-top:0; border-bottom:none; padding-right: 30px;">🤖 Arbys Sistem Botu</h2>
+            <div id="chat-box"></div>
+            
+            <div id="chat-input-area" class="bot-actions">
+                <input type="text" id="bot-input" placeholder="Kod veya mesaj yazın..." onkeypress="if(event.key==='Enter') sendBotMessage()">
+                <button onclick="sendBotMessage()" style="width:auto; margin:0;">Gönder</button>
+            </div>
+            <div id="chat-yesno-area" class="bot-actions hidden">
+                <button class="btn-success" onclick="handleBotYesNo(true)">Evet, Onaylıyorum</button>
+                <button class="btn-danger" onclick="handleBotYesNo(false)">Hayır, İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- YENİ: Ürün Düzenleme Modalı -->
+    <div id="edit-prod-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('edit-prod-modal')">&times;</span>
+            <h2 style="padding-right: 30px;">Ürün Düzenle</h2>
+            <input type="hidden" id="edit-p-id">
+            <input type="text" id="edit-p-name" placeholder="Ürün Adı">
+            <textarea id="edit-p-desc" placeholder="Açıklama" rows="3"></textarea>
+            <input type="number" id="edit-p-price" placeholder="Fiyat">
+            <div style="display:flex; gap:10px; margin:10px 0;">
+                <input type="number" id="edit-p-stock" placeholder="Stok Adedi" style="margin:0; flex:1;">
+                <label style="display:flex; align-items:center; gap:5px; color:#aaa; background:#252529; padding:0 15px; border-radius:8px; border:1px solid #444;">
+                    <input type="checkbox" id="edit-p-stock-inf" style="width:auto; margin:0;"> Sınırsız
+                </label>
+            </div>
+            <input type="text" id="edit-p-botcode" placeholder="6 Haneli Bot Kodu" maxlength="6">
+            <input type="text" id="edit-p-botq" placeholder="Bot Sorusu">
+            <button onclick="adminSaveEditProduct()">Güncelle</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        // Eklenenler: addDoc, serverTimestamp, query, orderBy
+        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, arrayUnion, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgFo__7kazVdDGL-PIb2_FJ8u5FpgrA_s",
+            authDomain: "webstore-3f157.firebaseapp.com",
+            projectId: "webstore-3f157",
+            storageBucket: "webstore-3f157.firebasestorage.app",
+            messagingSenderId: "388455089408",
+            appId: "1:388455089408:web:96f5a53a1c0e6772cb9fe5",
+            measurementId: "G-EBESW86T13"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let allProducts = {};
+
+        // Global functions
+        window.login = async () => {
+            const u = document.getElementById('auth-user').value.trim();
+            const p = document.getElementById('auth-pass').value.trim();
+            if(!u || !p) return alert("Alanları doldurun");
+
+            const docRef = doc(db, "users", u);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                if(docSnap.data().password === p) {
+                    initUserSession(u, docSnap.data());
+                } else {
+                    alert("Hatalı şifre");
+                }
+            } else {
+                alert("Kullanıcı yok. Lütfen kayıt olun.");
+            }
+        };
+
+        window.register = async () => {
+            const u = document.getElementById('auth-user').value.trim();
+            const p = document.getElementById('auth-pass').value.trim();
+            if(!u || !p) return alert("Alanları doldurun");
+
+            const docRef = doc(db, "users", u);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                alert("Bu kullanıcı adı alınmış.");
+            } else {
+                const isAdmin = (u === "Alper" && p === "Alper9119");
+                const userData = { password: p, coins: 0, inventory: [], role: isAdmin ? 'admin' : 'user' };
+                await setDoc(docRef, userData);
+                initUserSession(u, userData);
+            }
+        };
+
+        function initUserSession(username, data) {
+            currentUser = { username, ...data };
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            document.getElementById('welcome-text').innerText = `${username.toUpperCase()}`;
+            
+            if(currentUser.role === 'admin') {
+                document.getElementById('nav-admin').classList.remove('hidden');
+                loadAdminData();
+            }
+
+            // User changes listener
+            onSnapshot(doc(db, "users", username), (doc) => {
+                currentUser = { username, ...doc.data() };
+                document.getElementById('user-coins').innerText = currentUser.coins;
+                if(!document.getElementById('tab-inventory').classList.contains('hidden')) loadInventory();
+            });
+
+            // Global config listener
+            onSnapshot(doc(db, "config", "global"), (doc) => {
+                if(doc.exists() && doc.data().announcement) {
+                    const b = document.getElementById('announcement-banner');
+                    b.innerText = doc.data().announcement;
+                    b.style.display = 'block';
+                }
+            });
+
+            loadStore();
+            loadPackages();
+        }
+
+        window.logout = () => {
+            window.location.reload();
+        };
+
+        window.switchTab = (tab) => {
+            ['store', 'inventory', 'admin'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`)?.classList.remove('active');
+            });
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            document.getElementById(`nav-${tab}`)?.classList.add('active');
+            if(tab === 'inventory') loadInventory();
+        };
+
+        window.openModal = (id) => document.getElementById(id).classList.add('open');
+        window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+
+        // Esc tuşu ile modalları kapatma
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const openModal = document.querySelector('.modal.open');
+                if (openModal) closeModal(openModal.id);
+            }
+        });
+
+        // --- MAĞAZA ÖZELLİKLERİ ---
+
+        async function loadStore() {
+            onSnapshot(collection(db, "products"), (snapshot) => {
+                const grid = document.getElementById('store-grid');
+                grid.innerHTML = '';
+                allProducts = {}; 
+
+                snapshot.forEach(docSnap => {
+                    const p = docSnap.data();
+                    const id = docSnap.id;
+                    allProducts[id] = p; 
+
+                    let displayDesc = p.desc || '';
+                    let readMoreLink = '';
+                    if (displayDesc.length > 75) {
+                        displayDesc = displayDesc.substring(0, 75) + "...";
+                        readMoreLink = `<a href="#" class="read-more-link" onclick="openProductDetailModal('${id}'); event.stopPropagation();">tamamını görmek için ürüne göz at</a>`;
+                    }
+
+                    // Stok Durumu Hesaplama
+                    let stockText = p.stock === 'sinirsiz' ? 'Sınırsız' : `${p.stock} Adet`;
+                    let isOut = p.stock !== 'sinirsiz' && p.stock <= 0;
+                    let stockBadge = `<div class="stock-badge ${isOut ? 'stock-out' : ''}">Stok: ${stockText}</div>`;
+
+                    grid.innerHTML += `
+                        <div class="card" onclick="openProductDetailModal('${id}')">
+                            ${stockBadge}
+                            ${p.image ? `<img src="${p.image}">` : ''}
+                            <h3>${p.name}</h3>
+                            <div class="card-desc-wrapper">
+                                <p class="card-desc">${displayDesc}</p>
+                                ${readMoreLink}
+                            </div>
+                            <div class="price">${p.price} Coin</div>
+                            <button onclick="event.stopPropagation(); buyProduct('${id}')" ${isOut ? 'disabled class="btn-secondary"' : ''}>${isOut ? 'Tükendi' : 'Satın Al'}</button>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        // Ürün Detay Modalı
+        window.openProductDetailModal = (productId) => {
+            const p = allProducts[productId];
+            if(!p) return;
+
+            document.getElementById('md-img').src = p.image || '';
+            document.getElementById('md-name').innerText = p.name;
+            document.getElementById('md-price').innerText = p.price;
+            document.getElementById('md-desc').innerText = p.desc || 'Açıklama yok.';
+
+            const footer = document.getElementById('md-footer');
+            let isOut = p.stock !== 'sinirsiz' && p.stock <= 0;
+            
+            if(isOut) {
+                footer.innerHTML = `<button disabled class="btn-secondary">Stok Tükendi</button>`;
+            } else {
+                footer.innerHTML = `<button onclick="buyProduct('${productId}'); closeModal('product-detail-modal');">Satın Al (${p.price} Coin)</button>`;
+            }
+
+            openModal('product-detail-modal');
+        };
+
+        window.buyProduct = async (prodId) => {
+            const p = allProducts[prodId];
+            if(!p) return;
+            const price = p.price;
+            const name = p.name;
+
+            if(p.stock !== 'sinirsiz' && p.stock <= 0) return alert("Bu ürünün stoğu maalesef tükendi!");
+            if(currentUser.coins < price) return alert("Yetersiz Coin!");
+            
+            const confirmBuy = confirm(`"${name}" ürününü ${price} Coin'e almak istiyor musunuz?`);
+            if(!confirmBuy) return;
+
+            // Stok Düşme İşlemi
+            if(p.stock !== 'sinirsiz') {
+                await updateDoc(doc(db, "products", prodId), { stock: p.stock - 1 });
+            }
+
+            // Envantere Ekleme (Bot Kodu ile birlikte)
+            const userRef = doc(db, "users", currentUser.username);
+            await updateDoc(userRef, {
+                coins: currentUser.coins - price,
+                inventory: arrayUnion({ id: prodId, name: name, botCode: p.botCode || '', date: new Date().toISOString() })
+            });
+            alert("Başarıyla satın alındı! Envanterinizden aktifleştirebilirsiniz.");
+        };
+
+        function loadInventory() {
+            const grid = document.getElementById('inventory-grid');
+            grid.innerHTML = '';
+            if(!currentUser.inventory || currentUser.inventory.length === 0) {
+                grid.innerHTML = '<p style="color:#666; text-align:center; width:100%;">Envanteriniz boş.</p>';
+                return;
+            }
+            currentUser.inventory.forEach(item => {
+                grid.innerHTML += `
+                    <div class="card" style="cursor:default; transform:none; padding-bottom:15px;">
+                        <h3>${item.name}</h3>
+                        <p style="color:#888; font-size:0.9rem;">Alım: ${new Date(item.date).toLocaleDateString('tr-TR')}</p>
+                        <button class="btn-success" onclick="activateItem('${item.botCode}')" style="margin-top:10px; width:100%;">⚡ Aktifleştir</button>
+                    </div>
+                `;
+            });
+        }
+
+        window.activateItem = (code) => {
+            if(!code) return alert("Bu ürünün bot kodu tanımlanmamış. Admin ile iletişime geçin.");
+            alert(`Bu ürünü aktifleştirmek için Arbys Bota şu kodu iletin:\n\nKOD: ${code}\n\nTamam'a bastığınızda bot açılacaktır.`);
+            openArbysModal();
+            document.getElementById('bot-input').value = code; // Kodu otomatik yaz
+        };
+
+        // --- ARBYS BOT SİSTEMİ ---
+        let botState = 'idle'; // idle, wait_confirm, wait_answer
+        let botContext = null;
+
+        window.openArbysModal = () => {
+            openModal('arbys-modal');
+            const chat = document.getElementById('chat-box');
+            chat.innerHTML = '';
+            botState = 'idle';
+            botContext = null;
+            document.getElementById('chat-input-area').classList.remove('hidden');
+            document.getElementById('chat-yesno-area').classList.add('hidden');
+            addBotMsg("Merhaba! Ben Arbys. Ürün aktifleştirme kodunuzu aşağıya yazın veya yapıştırın.");
+            setTimeout(() => document.getElementById('bot-input').focus(), 100);
+        };
+
+        window.closeArbys = () => closeModal('arbys-modal');
+
+        function addBotMsg(text) {
+            const b = document.getElementById('chat-box');
+            b.innerHTML += `<div class="msg bot"><b>Arbys:</b> ${text}</div>`;
+            b.scrollTop = b.scrollHeight;
+        }
+        function addUserMsg(text) {
+            const b = document.getElementById('chat-box');
+            b.innerHTML += `<div class="msg user">${text}</div>`;
+            b.scrollTop = b.scrollHeight;
+        }
+
+        window.sendBotMessage = async () => {
+            const inp = document.getElementById('bot-input');
+            const text = inp.value.trim();
+            if(!text) return;
+            
+            addUserMsg(text);
+            inp.value = '';
+
+            if(botState === 'idle') {
+                const prod = Object.values(allProducts).find(p => p.botCode === text);
+                if(!prod) {
+                    setTimeout(() => addBotMsg("Maalesef bu koda ait bir ürün bulamadım. Lütfen kodu kontrol edip tekrar girin."), 500);
+                } else {
+                    botContext = { product: prod, code: text };
+                    botState = 'wait_confirm';
+                    setTimeout(() => {
+                        addBotMsg(`Bu kod <b>"${prod.name}"</b> ürününe ait. Aktifleştirmek istediğine emin misin?`);
+                        document.getElementById('chat-input-area').classList.add('hidden');
+                        document.getElementById('chat-yesno-area').classList.remove('hidden');
+                    }, 600);
+                }
+            } else if (botState === 'wait_answer') {
+                setTimeout(async () => {
+                    await addDoc(collection(db, "bot_responses"), {
+                        username: currentUser.username,
+                        productName: botContext.product.name,
+                        code: botContext.code,
+                        question: botContext.product.botQuestion || 'Soru yok',
+                        answer: text,
+                        timestamp: serverTimestamp()
+                    });
+                    addBotMsg("Harika! Yanıtın kaydedildi ve adminlere iletildi. İyi eğlenceler!");
+                    botState = 'idle';
+                    botContext = null;
+                }, 600);
+            }
+        };
+
+        window.handleBotYesNo = (isYes) => {
+            if(isYes) {
+                addUserMsg("Evet, Onaylıyorum.");
+                botState = 'wait_answer';
+                document.getElementById('chat-input-area').classList.remove('hidden');
+                document.getElementById('chat-yesno-area').classList.add('hidden');
+                setTimeout(() => {
+                    const q = botContext.product.botQuestion || "Lütfen aktifleştirme için gerekli bilgileri yazın.";
+                    addBotMsg(q);
+                    document.getElementById('bot-input').focus();
+                }, 500);
+            } else {
+                addUserMsg("Hayır, İptal.");
+                setTimeout(() => {
+                    addBotMsg("İşlem iptal edildi. Başka bir kod girebilirsiniz.");
+                    botState = 'idle';
+                    botContext = null;
+                    document.getElementById('chat-input-area').classList.remove('hidden');
+                    document.getElementById('chat-yesno-area').classList.add('hidden');
+                }, 500);
+            }
+        };
+
+        // --- YARDIMCI VE ADMIN ÖZELLİKLERİ ---
+        async function loadPackages() {
+            onSnapshot(collection(db, "packages"), (snapshot) => {
+                const grid = document.getElementById('coin-packages-grid');
+                grid.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const p = docSnap.data();
+                    grid.innerHTML += `
+                        <div class="card" style="cursor:default; transform:none;">
+                            <h3>${p.name}</h3>
+                            <div class="price">${p.coin} Coin</div>
+                            <button class="btn-success" style="width:100%; margin-top:10px;" onclick="alert('Ödeme sistemi yakında!')">Satın Al</button>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        window.redeemPromo = async () => {
+            const code = document.getElementById('promo-input').value.trim();
+            if(!code) return;
+            const pRef = doc(db, "promos", code);
+            const pSnap = await getDoc(pRef);
+            if(!pSnap.exists()) return alert("Kod geçersiz.");
+            const data = pSnap.data();
+            if(data.usedBy && data.usedBy.includes(currentUser.username)) return alert("Bu kodu zaten kullandınız.");
+            await updateDoc(doc(db, "users", currentUser.username), { coins: currentUser.coins + data.reward });
+            await updateDoc(pRef, { usedBy: arrayUnion(currentUser.username) });
+            alert(`${data.reward} Coin hesabınıza eklendi!`);
+            closeModal('promo-modal');
+            document.getElementById('promo-input').value = '';
+        };
+
+        function loadAdminData() {
+            // Kullanıcılar
+            onSnapshot(collection(db, "users"), (snapshot) => {
+                const tbody = document.getElementById('admin-users-list');
+                tbody.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const u = docSnap.data();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${docSnap.id} ${u.role === 'admin' ? '<span style="color:var(--primary); font-size:0.8rem;">(Admin)</span>' : ''}</td>
+                            <td>${u.coins}</td>
+                            <td style="display:flex; gap:5px;">
+                                <button onclick="adminModCoin('${docSnap.id}', 10)" style="width:auto; padding:5px 10px; margin:0; background:#444;">+10</button>
+                                <button onclick="adminModCoin('${docSnap.id}', -10)" style="width:auto; padding:5px 10px; margin:0; background:var(--danger);"> -10</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+
+            // Promosyonlar
+            onSnapshot(collection(db, "promos"), (snapshot) => {
+                const list = document.getElementById('admin-promo-list');
+                list.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    list.innerHTML += `<p style="background:rgba(255,255,255,0.03); padding:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center;"><b>${docSnap.id}</b> - ${docSnap.data().reward} Coin <button class="btn-danger" style="width:auto;margin:0;padding:5px 10px;" onclick="adminDelDoc('promos', '${docSnap.id}')">Sil</button></p>`;
+                });
+            });
+
+            // Paketler
+            onSnapshot(collection(db, "packages"), (snapshot) => {
+                const list = document.getElementById('admin-packages-list');
+                list.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    list.innerHTML += `<p style="background:rgba(255,255,255,0.03); padding:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center;"><b>${docSnap.data().name}</b> - ${docSnap.data().coin} Coin <button class="btn-danger" style="width:auto;margin:0;padding:5px 10px;" onclick="adminDelDoc('packages', '${docSnap.id}')">Sil</button></p>`;
+                });
+            });
+
+            // Ürünler (Düzenle ve Sil butonları ile)
+            onSnapshot(collection(db, "products"), (snapshot) => {
+                const list = document.getElementById('admin-products-list');
+                list.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const p = docSnap.data();
+                    list.innerHTML += `
+                        <div style="background:rgba(255,255,255,0.03); padding:10px; margin-bottom:5px; border-radius:5px; display:flex; justify-content:space-between; align-items:center;">
+                            <div><b>${p.name}</b> (${p.price} C) - Kod: <span style="color:var(--primary)">${p.botCode||'Yok'}</span></div>
+                            <div class="admin-row-actions">
+                                <button onclick="openEditProduct('${docSnap.id}')" style="background:#1976d2; padding:5px 10px; margin:0; width:auto;">Düzenle</button>
+                                <button class="btn-danger" onclick="adminDelDoc('products', '${docSnap.id}')" style="padding:5px 10px; margin:0; width:auto;">Sil</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+
+            // Bot Yanıtları (Gelenler)
+            const respQuery = query(collection(db, "bot_responses"), orderBy("timestamp", "desc"));
+            onSnapshot(respQuery, (snapshot) => {
+                const tbody = document.getElementById('admin-bot-responses');
+                tbody.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const d = docSnap.data();
+                    const date = d.timestamp ? new Date(d.timestamp.toDate()).toLocaleString('tr-TR') : 'Şimdi';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><b style="color:var(--primary)">${d.username}</b></td>
+                            <td>${d.productName}</td>
+                            <td>${d.code}</td>
+                            <td><i>${d.answer}</i></td>
+                            <td style="font-size:0.8rem; color:#888;">${date}</td>
+                        </tr>
+                    `;
+                });
+            });
+        }
+
+        // Base64 Image Compressor
+        function resizeImage(file, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const MAX_WIDTH = 400; 
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    canvas.width = width; canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    callback(canvas.toDataURL('image/jpeg', 0.7)); 
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+
+        window.adminAddProduct = async () => {
+            const name = document.getElementById('add-prod-name').value;
+            const desc = document.getElementById('add-prod-desc').value;
+            const price = parseInt(document.getElementById('add-prod-price').value);
+            const isInf = document.getElementById('add-prod-stock-inf').checked;
+            const stock = isInf ? 'sinirsiz' : (parseInt(document.getElementById('add-prod-stock').value) || 0);
+            const botCode = document.getElementById('add-prod-botcode').value;
+            const botQ = document.getElementById('add-prod-botq').value;
+            const file = document.getElementById('add-prod-img').files[0];
+
+            if(!name || !price) return alert("Ad ve fiyat zorunlu");
+
+            const saveProd = async (base64Img) => {
+                await setDoc(doc(db, "products", "prod_"+Date.now()), { 
+                    name, desc, price, stock, botCode, botQuestion: botQ, image: base64Img 
+                });
+                alert("Ürün eklendi");
+                ['add-prod-name', 'add-prod-desc', 'add-prod-price', 'add-prod-stock', 'add-prod-botcode', 'add-prod-botq', 'add-prod-img'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('add-prod-stock-inf').checked = false;
+            };
+
+            if(file) resizeImage(file, saveProd); else saveProd("");
+        };
+
+        window.openEditProduct = (id) => {
+            const p = allProducts[id];
+            if(!p) return;
+            document.getElementById('edit-p-id').value = id;
+            document.getElementById('edit-p-name').value = p.name;
+            document.getElementById('edit-p-desc').value = p.desc;
+            document.getElementById('edit-p-price').value = p.price;
+            document.getElementById('edit-p-botcode').value = p.botCode || '';
+            document.getElementById('edit-p-botq').value = p.botQuestion || '';
+            
+            if(p.stock === 'sinirsiz') {
+                document.getElementById('edit-p-stock-inf').checked = true;
+                document.getElementById('edit-p-stock').value = '';
+            } else {
+                document.getElementById('edit-p-stock-inf').checked = false;
+                document.getElementById('edit-p-stock').value = p.stock || 0;
+            }
+            openModal('edit-prod-modal');
+        };
+
+        window.adminSaveEditProduct = async () => {
+            const id = document.getElementById('edit-p-id').value;
+            const isInf = document.getElementById('edit-p-stock-inf').checked;
+            const stockVal = isInf ? 'sinirsiz' : (parseInt(document.getElementById('edit-p-stock').value)||0);
+            
+            await updateDoc(doc(db, "products", id), {
+                name: document.getElementById('edit-p-name').value,
+                desc: document.getElementById('edit-p-desc').value,
+                price: parseInt(document.getElementById('edit-p-price').value),
+                stock: stockVal,
+                botCode: document.getElementById('edit-p-botcode').value,
+                botQuestion: document.getElementById('edit-p-botq').value
+            });
+            closeModal('edit-prod-modal');
+        };
+
+        window.adminAddCoinPackage = async () => {
+            const name = document.getElementById('add-pkg-name').value;
+            const coin = parseInt(document.getElementById('add-pkg-coin').value);
+            if(!name || !coin) return;
+            await setDoc(doc(db, "packages", "pkg_"+Date.now()), { name, coin });
+            document.getElementById('add-pkg-name').value = '';
+            document.getElementById('add-pkg-coin').value = '';
+        };
+
+        window.adminAddPromo = async () => {
+            const code = document.getElementById('add-promo-code').value;
+            const reward = parseInt(document.getElementById('add-promo-reward').value);
+            if(!code || !reward) return;
+            await setDoc(doc(db, "promos", code), { reward, usedBy: [] });
+            document.getElementById('add-promo-code').value = '';
+            document.getElementById('add-promo-reward').value = '';
+        };
+
+        window.adminModCoin = async (username, amount) => {
+            const ref = doc(db, "users", username);
+            const snap = await getDoc(ref);
+            if(snap.exists()) {
+                let newCoin = snap.data().coins + amount;
+                if(newCoin < 0) newCoin = 0;
+                await updateDoc(ref, { coins: newCoin });
+            }
+        };
+
+        window.adminDelDoc = async (col, id) => {
+            if(confirm("Silmek istediğinize emin misiniz?")) await deleteDoc(doc(db, col, id));
+        };
+
+        window.adminSetAnnouncement = async () => {
+            const text = document.getElementById('add-announcement').value;
+            await setDoc(doc(db, "config", "global"), { announcement: text }, { merge: true });
+            document.getElementById('add-announcement').value = '';
+            alert("Duyuru yayınlandı.");
+        };
+
+    </script>
+</body>
+</html>
