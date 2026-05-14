@@ -14,115 +14,132 @@
         }
         body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', 'Segoe UI', sans-serif; overflow-x: hidden; }
         .hidden { display: none !important; }
-        .container { max-width: 1300px; margin: 0 auto; padding: 30px; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 30px; box-sizing: border-box; }
         
         /* Gelişmiş Auth Ekranı */
         #auth-screen { display: flex; justify-content: center; align-items: center; height: 100vh; background: radial-gradient(circle, #2a2a30 0%, #101012 100%); padding: 20px; box-sizing: border-box; }
-        .auth-box { background: var(--panel); padding: 50px; border-radius: 15px; box-shadow: var(--shadow); text-align: center; width: 100%; max-width: 400px; border: 1px solid #333; transform: scale(1); transition: 0.3s; box-sizing: border-box; }
-        .auth-box:hover { transform: scale(1.02); }
-        .auth-box h2 { color: var(--primary); margin-bottom: 30px; font-weight: 600; }
-        input, textarea { width: 100%; padding: 12px 15px; margin: 10px 0; background: #252529; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box; font-size: 1rem; transition: 0.2s; }
-        input:focus, textarea:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 10px rgba(255,64,129,0.3); }
-        button { background: var(--primary); color: white; border: none; padding: 12px 20px; margin: 10px 0; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; font-size: 1rem; transition: all 0.3sEase; text-transform: uppercase; letter-spacing: 1px; box-sizing: border-box; }
+        .auth-box { background: var(--panel); padding: 40px; border-radius: 15px; box-shadow: var(--shadow); text-align: center; width: 100%; max-width: 400px; border: 1px solid #333; transition: 0.3s; box-sizing: border-box; }
+        .auth-box h2 { color: var(--primary); margin-bottom: 25px; font-weight: 600; margin-top: 0; }
+        input, textarea { width: 100%; padding: 12px 15px; margin: 10px 0; background: #252529; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box; font-size: 0.95rem; transition: 0.2s; }
+        input:focus, textarea:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 8px rgba(255,64,129,0.3); }
+        button { background: var(--primary); color: white; border: none; padding: 12px 20px; margin: 8px 0; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; font-size: 0.95rem; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; box-sizing: border-box; }
         button:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,64,129,0.4); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-        .btn-secondary { background: #333; color: #ccc; }
-        .btn-secondary:hover { background: #444; color: white; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        .btn-secondary { background: #333; color: #ccc; } .btn-secondary:hover { background: #444; color: white; }
         .btn-success { background: var(--success); }
         .btn-danger { background: var(--danger); }
+        .btn-approved { background: #2e7d32 !important; color: #fff !important; }
 
-        /* Modern Uygulama Düzeni */
-        header { background: var(--panel); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        /* Modern Uygulama Düzeni (Masaüstü) */
+        header { background: var(--panel); padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
         .header-left, .header-right { display: flex; align-items: center; gap: 20px; }
-        .coin-display { display: flex; align-items: center; gap: 12px; font-size: 1.3rem; font-weight: bold; color: var(--accent); background: rgba(255,215,0,0.1); padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.2); }
-        .coin-add-btn { background: var(--success); color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 1.6rem; line-height: 1; padding: 0; margin: 0; border: none; transition: 0.2s; }
+        .coin-display { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: bold; color: var(--accent); background: rgba(255,215,0,0.1); padding: 6px 15px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.2); }
+        /* Artı Butonu Küçültüldü */
+        .coin-add-btn { background: var(--success); color: white; border-radius: 50%; width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 1.3rem; line-height: 26px; padding: 0; margin: 0; border: none; transition: 0.2s; }
         .coin-add-btn:hover { background: #2bbbad; transform: rotate(90deg); }
-        nav { display: flex; gap: 10px; flex-wrap: wrap; }
-        nav button { width: auto; margin: 0; padding: 10px 15px; text-transform: none; background: transparent; color: #aaa; }
+        nav { display: flex; gap: 10px; }
+        nav button { width: auto; margin: 0; padding: 8px 15px; text-transform: none; background: transparent; color: #aaa; font-size: 0.95rem; }
         nav button:hover { background: rgba(255,255,255,0.05); color: white; transform: none; box-shadow: none; }
         nav button.active { color: var(--primary); border-bottom: 2px solid var(--primary); border-radius: 0; }
+        .header-right button { width: auto; margin: 0; padding: 8px 15px; font-size: 0.9rem; text-transform: none; }
 
-        /* Şık Ürün Kartları ve Efektler */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; margin-top: 20px; }
-        .card { background: var(--panel); border-radius: 12px; padding: 20px; text-align: center; border: 1px solid #333; box-shadow: var(--shadow); transition: all 0.4s ease; overflow: hidden; position: relative; cursor: pointer; }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.8); border-color: #444; }
-        .card::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); transition: 0.5s; }
-        .card:hover::after { left: 100%; }
-        .card img { max-width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; transition: 0.3s; }
+        /* Şık Ürün Kartları */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-top: 20px; }
+        .card { background: var(--panel); border-radius: 12px; padding: 20px; text-align: center; border: 1px solid #333; box-shadow: var(--shadow); transition: all 0.3s ease; overflow: hidden; position: relative; cursor: pointer; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-5px); border-color: #555; }
+        .card img { max-width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; transition: 0.3s; }
         .card:hover img { transform: scale(1.03); }
-        .card h3 { margin: 10px 0 8px 0; font-size: 1.2rem; font-weight: 600; color: white; }
+        .card h3 { margin: 10px 0 5px 0; font-size: 1.1rem; font-weight: 600; color: white; }
         
         /* Stok Rozeti */
-        .stock-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); padding: 5px 10px; border-radius: 5px; font-size: 0.85rem; border: 1px solid #555; z-index: 5; font-weight: 600; }
+        .stock-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.85); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; border: 1px solid #555; z-index: 5; font-weight: 600; }
         .stock-out { color: var(--danger); border-color: var(--danger); }
 
         /* Açıklama Sınırlama */
-        .card-desc-wrapper { position: relative; margin-bottom: 15px; }
-        .card-desc { color: #aaa; font-size: 0.9rem; line-height: 1.5; margin: 0; }
-        .read-more-link { color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: none; transition: 0.2s; display: inline-block; margin-top: 5px; font-size: 0.9rem; }
+        .card-desc-wrapper { position: relative; margin-bottom: 15px; flex-grow: 1; }
+        .card-desc { color: #aaa; font-size: 0.85rem; line-height: 1.5; margin: 0; }
+        .read-more-link { color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: none; transition: 0.2s; display: inline-block; margin-top: 5px; font-size: 0.85rem; }
 
-        .price { color: var(--accent); font-weight: bold; font-size: 1.4rem; margin-bottom: 15px; }
+        .price { color: var(--accent); font-weight: bold; font-size: 1.3rem; margin-bottom: 15px; }
+        .card > button { margin-top: auto; }
 
         /* Gelişmiş Modallar */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(5px); padding: 15px; box-sizing: border-box; }
         .modal.open { opacity: 1; visibility: visible; }
-        .modal-content { background: var(--panel); padding: 30px; border-radius: 15px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; border: 1px solid #444; transform: translateY(-20px); transition: 0.3s; box-shadow: var(--shadow); position: relative; box-sizing: border-box; }
+        .modal-content { background: var(--panel); padding: 25px; border-radius: 15px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; border: 1px solid #444; transform: translateY(-20px); transition: 0.3s; box-shadow: var(--shadow); position: relative; box-sizing: border-box; }
         .modal.open .modal-content { transform: translateY(0); }
-        .close-btn { position: absolute; top: 15px; right: 20px; cursor: pointer; font-size: 1.8rem; color: #666; transition: 0.2s; z-index: 10; background: rgba(0,0,0,0.5); border-radius: 50%; width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; }
+        .close-btn { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 1.5rem; color: #aaa; transition: 0.2s; z-index: 10; background: rgba(0,0,0,0.6); border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; }
         .close-btn:hover { color: var(--danger); background: #111; }
-        .modal h2 { margin-top: 0; color: white; border-bottom: 1px solid #333; padding-bottom: 15px; padding-right: 40px; }
+        .modal h2 { margin-top: 0; color: white; border-bottom: 1px solid #333; padding-bottom: 12px; padding-right: 35px; font-size: 1.3rem; }
 
-        /* Ürün Detay Modalı Özellikleri */
-        #product-detail-modal .modal-content { max-width: 700px; padding: 0; overflow: hidden; display: flex; flex-direction: column; }
-        .modal-header-img { width: 100%; height: 300px; object-fit: cover; }
-        .modal-body { padding: 25px; }
-        .modal-body h2 { border: none; padding: 0; margin-bottom: 10px; }
-        .modal-body .full-desc { color: #ccc; line-height: 1.7; margin-bottom: 20px; }
-        .modal-body .price { font-size: 1.8rem; margin-bottom: 20px; }
-        .modal-footer { padding: 15px 25px; background: rgba(0,0,0,0.2); border-top: 1px solid #333; text-align: right; }
+        /* Ürün Detay Modalı */
+        #product-detail-modal .modal-content { max-width: 600px; padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+        .modal-header-img { width: 100%; height: 250px; object-fit: cover; }
+        .modal-body { padding: 20px; }
+        .modal-body h2 { border: none; padding: 0; margin-bottom: 8px; }
+        .modal-body .full-desc { color: #ccc; line-height: 1.6; font-size: 0.95rem; margin-bottom: 15px; }
+        .modal-body .price { font-size: 1.5rem; margin-bottom: 15px; }
+        .modal-footer { padding: 15px 20px; background: rgba(0,0,0,0.2); border-top: 1px solid #333; text-align: right; }
 
         /* Arbys Bot Chat Modalı */
-        #chat-box { background: var(--bot-bg); height: 350px; border-radius: 10px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; border: 1px solid #333; }
-        .msg { padding: 10px 15px; border-radius: 15px; max-width: 85%; font-size: 0.95rem; line-height: 1.4; }
+        #chat-box { background: var(--bot-bg); height: 300px; border-radius: 10px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; border: 1px solid #333; }
+        .msg { padding: 10px 15px; border-radius: 12px; max-width: 85%; font-size: 0.9rem; line-height: 1.4; }
         .msg.bot { background: var(--bot-msg); color: white; align-self: flex-start; border-bottom-left-radius: 2px; }
         .msg.user { background: var(--user-msg); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
         .bot-actions { display: flex; gap: 10px; }
 
-        /* Admin Dashboard & Table Scroll */
+        /* Admin Dashboard */
         .admin-section { background: var(--panel); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; overflow: hidden; }
+        .admin-section h3 { margin-top: 0; color: var(--primary); font-size: 1.1rem; }
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 500px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; color: #ccc; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 500px; font-size: 0.9rem; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; color: #ccc; }
         th { color: white; font-weight: 600; }
-        
-        .form-row { display: flex; gap: 10px; margin: 12px 0; align-items: center; }
+        .form-row { display: flex; gap: 10px; margin: 10px 0; align-items: center; }
         .admin-split { display: flex; gap: 20px; }
+        #announcement-banner { background: var(--primary); color: white; text-align: center; padding: 10px; font-weight: 600; display: none; position: relative; z-index: 101; font-size: 0.9rem; }
 
-        #announcement-banner { background: var(--primary); color: white; text-align: center; padding: 12px; font-weight: 600; display: none; position: relative; z-index: 101; letter-spacing: 0.5px; }
-
-        /* MOBİL UYUM (RESPONSIVE) KODLARI EKLENDİ */
+        /* ==========================================
+           TELEFON İÇİN KUSURSUZ MOBİL UYUM (SİHİR BURADA)
+           ========================================== */
         @media (max-width: 768px) {
-            header { flex-direction: column; padding: 15px; gap: 15px; }
-            .header-left, .header-right { flex-direction: column; width: 100%; gap: 10px; justify-content: center; text-align: center; }
-            nav { justify-content: center; width: 100%; }
-            .header-right button { width: 100%; margin: 5px 0; }
-            .coin-display { justify-content: space-between; width: 100%; box-sizing: border-box; }
-            
             .container { padding: 15px; }
-            .grid { grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); } /* Mobilde tek sütün kartlar */
             
-            .form-row { flex-direction: column; align-items: stretch; } /* Admin formları alt alta */
-            .form-row input, .form-row label { width: 100% !important; flex: none !important; margin: 5px 0 !important; box-sizing: border-box; }
-            .admin-split { flex-direction: column; } /* Promosyon ve Paket bölümleri alt alta */
+            /* Kompakt Mobil Header */
+            header { padding: 10px 15px; flex-direction: column; gap: 12px; }
+            .header-left { width: 100%; flex-direction: column; gap: 10px; }
+            #welcome-text { display: block; text-align: center; width: 100%; font-size: 1.1rem !important; }
             
-            .modal-content { padding: 20px; }
-            .modal-header-img { height: 200px; }
+            nav { width: 100%; display: flex; justify-content: space-between; background: rgba(255,255,255,0.03); border-radius: 8px; padding: 4px; box-sizing: border-box; }
+            nav button { flex: 1; text-align: center; padding: 8px 0; font-size: 0.85rem; border-radius: 6px; border: none !important; }
+            nav button.active { background: var(--primary); color: white; }
+
+            .header-right { width: 100%; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+            .header-right button { flex: 1; min-width: 30%; padding: 8px 5px; font-size: 0.8rem; margin: 0; }
+            .coin-display { flex: 1; min-width: 35%; justify-content: center; font-size: 0.9rem; padding: 6px 10px; height: 35px; box-sizing: border-box; margin:0; }
+            .coin-add-btn { width: 22px; height: 22px; font-size: 1.2rem; line-height: 22px; }
+
+            /* Kartlar & Grid */
+            .grid { grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 15px; margin-top: 15px; }
+            .card { padding: 15px; }
+            .card img { height: 140px; margin-bottom: 10px; }
+            .price { font-size: 1.2rem; margin-bottom: 10px; }
+
+            /* Admin Paneli Mobilde Alt Alta */
+            .form-row { flex-direction: column; align-items: stretch; gap: 8px; }
+            .form-row input, .form-row label { width: 100% !important; margin: 0 !important; box-sizing: border-box; }
+            .admin-split { flex-direction: column; gap: 15px; }
+            .admin-section { padding: 15px; }
+            
+            /* Modallar */
+            .modal-content { padding: 20px 15px; max-height: 95vh; }
+            .modal h2 { font-size: 1.1rem; }
+            .modal-header-img { height: 180px; }
             .modal-body { padding: 15px; }
             .modal-footer { padding: 15px; }
-            .bot-actions { flex-direction: column; }
-            .bot-actions button { width: 100%; }
-            
-            #chat-box { height: 280px; } /* Telefondan klavye açıldığında taşmaması için biraz daha kısa */
+            #chat-box { height: 250px; } /* Klavye açılınca taşmasın diye */
+            .bot-actions { flex-direction: column; gap: 8px; }
+            .bot-actions button { width: 100%; margin: 0; }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -145,18 +162,18 @@
         <div id="announcement-banner"></div>
         <header>
             <div class="header-left">
-                <span id="welcome-text" style="font-weight:600; color:white; font-size:1.2rem;"></span>
+                <span id="welcome-text" style="font-weight:600; color:white;"></span>
                 <nav>
                     <button onclick="switchTab('store')" id="nav-store" class="active">Mağaza</button>
                     <button onclick="switchTab('inventory')" id="nav-inventory">Envanter</button>
-                    <button id="nav-admin" class="hidden btn-danger" onclick="switchTab('admin')" style="color:var(--danger)">Admin Panel</button>
+                    <button id="nav-admin" class="hidden btn-danger" onclick="switchTab('admin')">Admin Panel</button>
                 </nav>
             </div>
             <div class="header-right">
-                <button onclick="openArbysModal()" style="background:#6a1b9a;">🤖 Arbys Bot</button>
-                <button onclick="openModal('promo-modal')" style="background: var(--success);">Promo Kod</button>
+                <button onclick="openArbysModal()" style="background:#6a1b9a;">🤖 Arbys</button>
+                <button onclick="openModal('promo-modal')" style="background: var(--success);">Promo</button>
                 <div class="coin-display">
-                    <span><span id="user-coins">0</span> Coin</span>
+                    <span style="white-space: nowrap;"><span id="user-coins">0</span> C</span>
                     <button class="coin-add-btn" onclick="openModal('coin-modal')">+</button>
                 </div>
                 <button onclick="logout()" class="btn-secondary">Çıkış</button>
@@ -180,24 +197,24 @@
                 <h2 style="color:white; margin-top:0;">Yönetim Paneli</h2>
                 
                 <div class="admin-section">
-                    <h3>Ürün Ekle</h3>
+                    <h3>Yeni Ürün Ekle</h3>
                     <input type="text" id="add-prod-name" placeholder="Ürün Adı">
-                    <textarea id="add-prod-desc" placeholder="Açıklama (Uzun yazabilirsiniz, otomatik kısalır)" rows="3"></textarea>
+                    <textarea id="add-prod-desc" placeholder="Açıklama (Uzun yazabilirsiniz, otomatik kısalır)" rows="2"></textarea>
                     
                     <div class="form-row">
                         <input type="number" id="add-prod-price" placeholder="Fiyat (Coin)" style="flex:1;">
                         <input type="number" id="add-prod-stock" placeholder="Stok Adedi" style="flex:1;">
-                        <label style="color:#aaa; background:#252529; padding:12px 15px; border-radius:8px; border:1px solid #444; flex:1; display:flex; justify-content:center;">
-                            <input type="checkbox" id="add-prod-stock-inf" style="width:auto; margin-right:8px;"> Sınırsız Stok
+                        <label style="color:#aaa; background:#252529; padding:10px; border-radius:8px; border:1px solid #444; flex:1; display:flex; justify-content:center; align-items:center; cursor:pointer;">
+                            <input type="checkbox" id="add-prod-stock-inf" style="width:auto; margin:0 8px 0 0;"> Sınırsız Stok
                         </label>
                     </div>
 
                     <div class="form-row">
                         <input type="text" id="add-prod-botcode" placeholder="6 Haneli Bot Kodu (Örn: 123456)" maxlength="6" style="flex:1;">
-                        <input type="text" id="add-prod-botq" placeholder="Bot Kullanıcıya Ne Soracak?" style="flex:2;">
+                        <input type="text" id="add-prod-botq" placeholder="Bot Ne Soracak?" style="flex:2;">
                     </div>
 
-                    <input type="file" id="add-prod-img" accept="image/*">
+                    <input type="file" id="add-prod-img" accept="image/*" style="padding: 8px;">
                     <button onclick="adminAddProduct()">Ürünü Ekle</button>
                 </div>
 
@@ -218,11 +235,11 @@
 
                 <div class="admin-split">
                     <div class="admin-section" style="flex:1; margin-bottom:0;">
-                        <h3>Coin Paketleri</h3>
+                        <h3>Coin Paketleri Ekle</h3>
                         <input type="text" id="add-pkg-name" placeholder="Paket Adı (Örn: 50 TL)">
                         <input type="number" id="add-pkg-coin" placeholder="Verilecek Coin">
                         <button onclick="adminAddCoinPackage()">Paket Ekle</button>
-                        <div id="admin-packages-list" style="margin-top:15px;"></div>
+                        <div id="admin-packages-list" style="margin-top:10px;"></div>
                     </div>
 
                     <div class="admin-section" style="flex:1; margin-bottom:0;">
@@ -230,7 +247,7 @@
                         <input type="text" id="add-promo-code" placeholder="Kod (Örn: MEGA2026)">
                         <input type="number" id="add-promo-reward" placeholder="Coin Ödülü">
                         <button onclick="adminAddPromo()">Kod Ekle</button>
-                        <div id="admin-promo-list" style="margin-top:15px;"></div>
+                        <div id="admin-promo-list" style="margin-top:10px;"></div>
                     </div>
                 </div>
 
@@ -258,7 +275,7 @@
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('coin-modal')">&times;</span>
             <h2>Coin Satın Al</h2>
-            <div id="coin-packages-grid" class="grid" style="grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));"></div>
+            <div id="coin-packages-grid" class="grid" style="grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); margin-top:0;"></div>
         </div>
     </div>
 
@@ -315,8 +332,8 @@
             <div class="form-row">
                 <input type="number" id="edit-p-price" placeholder="Fiyat" style="flex:1;">
                 <input type="number" id="edit-p-stock" placeholder="Stok Adedi" style="flex:1;">
-                <label style="color:#aaa; background:#252529; padding:12px 15px; border-radius:8px; border:1px solid #444; flex:1; display:flex; justify-content:center;">
-                    <input type="checkbox" id="edit-p-stock-inf" style="width:auto; margin-right:8px;"> Sınırsız
+                <label style="color:#aaa; background:#252529; padding:10px; border-radius:8px; border:1px solid #444; flex:1; display:flex; justify-content:center; align-items:center;">
+                    <input type="checkbox" id="edit-p-stock-inf" style="width:auto; margin:0 8px 0 0;"> Sınırsız
                 </label>
             </div>
             
@@ -451,8 +468,8 @@
             document.getElementById('md-price').innerText = p.price;
             document.getElementById('md-desc').innerText = p.desc || 'Açıklama yok.';
             const footer = document.getElementById('md-footer');
-            if(p.stock !== 'sinirsiz' && p.stock <= 0) footer.innerHTML = `<button disabled class="btn-secondary" style="width:100%;">Stok Tükendi</button>`;
-            else footer.innerHTML = `<button onclick="buyProduct('${productId}'); closeModal('product-detail-modal');" style="width:100%;">Satın Al (${p.price} Coin)</button>`;
+            if(p.stock !== 'sinirsiz' && p.stock <= 0) footer.innerHTML = `<button disabled class="btn-secondary" style="width:100%; margin:0;">Stok Tükendi</button>`;
+            else footer.innerHTML = `<button onclick="buyProduct('${productId}'); closeModal('product-detail-modal');" style="width:100%; margin:0;">Satın Al (${p.price} Coin)</button>`;
             openModal('product-detail-modal');
         };
 
@@ -463,9 +480,11 @@
             if(!confirm(`"${p.name}" ürününü ${p.price} Coin'e almak istiyor musunuz?`)) return;
 
             if(p.stock !== 'sinirsiz') await updateDoc(doc(db, "products", prodId), { stock: p.stock - 1 });
+            
+            // YENİ: Envantere eklerken 'pending' (beklemede) durumu ekliyoruz
             await updateDoc(doc(db, "users", currentUser.username), {
                 coins: currentUser.coins - p.price,
-                inventory: arrayUnion({ id: prodId, name: p.name, botCode: p.botCode || '', date: new Date().toISOString() })
+                inventory: arrayUnion({ id: prodId, name: p.name, botCode: p.botCode || '', date: new Date().toISOString(), status: 'pending' })
             });
             alert("Başarıyla satın alındı! Envanterinizden aktifleştirebilirsiniz.");
         };
@@ -473,12 +492,21 @@
         function loadInventory() {
             const grid = document.getElementById('inventory-grid'); grid.innerHTML = '';
             if(!currentUser.inventory || currentUser.inventory.length === 0) { grid.innerHTML = '<p style="color:#666; text-align:center; width:100%;">Envanteriniz boş.</p>'; return; }
+            
             currentUser.inventory.forEach(item => {
+                // YENİ: Duruma göre buton kontrolü
+                let isApproved = item.status === 'approved';
+                let btnHtml = isApproved 
+                    ? `<button disabled class="btn-approved" style="margin-top:10px; width:100%;">✓ Onaylandı</button>`
+                    : `<button class="btn-success" onclick="activateItem('${item.botCode}')" style="margin-top:10px; width:100%;">⚡ Aktifleştir</button>`;
+
                 grid.innerHTML += `
-                    <div class="card" style="cursor:default; transform:none; padding-bottom:15px;">
-                        <h3>${item.name}</h3>
-                        <p style="color:#888; font-size:0.9rem;">Alım: ${new Date(item.date).toLocaleDateString('tr-TR')}</p>
-                        <button class="btn-success" onclick="activateItem('${item.botCode}')" style="margin-top:10px; width:100%;">⚡ Aktifleştir</button>
+                    <div class="card" style="cursor:default; transform:none; padding-bottom:15px; display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <h3 style="margin-top:0;">${item.name}</h3>
+                            <p style="color:#888; font-size:0.85rem; margin-bottom:5px;">Alım: ${new Date(item.date).toLocaleDateString('tr-TR')}</p>
+                        </div>
+                        ${btnHtml}
                     </div>
                 `;
             });
@@ -520,10 +548,24 @@
                 }
             } else if (botState === 'wait_answer') {
                 setTimeout(async () => {
+                    // YENİ: Yanıtı kaydet ve kullanıcının envanterini GÜNCELLE (Onaylandı yap)
                     await addDoc(collection(db, "bot_responses"), {
                         username: currentUser.username, productName: botContext.product.name, code: botContext.code, question: botContext.product.botQuestion || 'Soru yok', answer: text, timestamp: serverTimestamp()
                     });
-                    addBotMsg("Yanıtın kaydedildi ve adminlere iletildi. Teşekkürler!");
+                    
+                    const userRef = doc(db, "users", currentUser.username);
+                    const userSnap = await getDoc(userRef);
+                    if(userSnap.exists()){
+                        let inv = userSnap.data().inventory || [];
+                        // Bu koda sahip olan ve henüz onaylanmamış İLK ürünü bul
+                        let targetIndex = inv.findIndex(i => i.botCode === botContext.code && i.status !== 'approved');
+                        if(targetIndex !== -1) {
+                            inv[targetIndex].status = 'approved';
+                            await updateDoc(userRef, { inventory: inv });
+                        }
+                    }
+
+                    addBotMsg("Yanıtın kaydedildi ve ürünün Onaylandı. Teşekkürler!");
                     botState = 'idle'; botContext = null;
                 }, 600);
             }
@@ -546,7 +588,7 @@
                 const grid = document.getElementById('coin-packages-grid'); grid.innerHTML = '';
                 snapshot.forEach(docSnap => {
                     const p = docSnap.data();
-                    grid.innerHTML += `<div class="card" style="cursor:default; transform:none;"><h3>${p.name}</h3><div class="price">${p.coin} Coin</div><button class="btn-success" style="width:100%; margin-top:10px;" onclick="alert('Ödeme sistemi yakında!')">Satın Al</button></div>`;
+                    grid.innerHTML += `<div class="card" style="cursor:default; transform:none; padding:15px;"><h3>${p.name}</h3><div class="price">${p.coin} Coin</div><button class="btn-success" style="width:100%; margin-top:10px;" onclick="alert('Ödeme sistemi yakında!')">Satın Al</button></div>`;
                 });
             });
         }
@@ -564,22 +606,22 @@
                 const tbody = document.getElementById('admin-users-list'); tbody.innerHTML = '';
                 snapshot.forEach(docSnap => {
                     const u = docSnap.data();
-                    tbody.innerHTML += `<tr><td>${docSnap.id}</td><td>${u.coins}</td><td style="display:flex; gap:5px;"><button onclick="adminModCoin('${docSnap.id}', 10)" style="padding:5px; margin:0;">+10</button><button onclick="adminModCoin('${docSnap.id}', -10)" class="btn-danger" style="padding:5px; margin:0;">-10</button></td></tr>`;
+                    tbody.innerHTML += `<tr><td>${docSnap.id}</td><td>${u.coins}</td><td style="display:flex; gap:5px;"><button onclick="adminModCoin('${docSnap.id}', 10)" style="padding:5px 8px; margin:0;">+10</button><button onclick="adminModCoin('${docSnap.id}', -10)" class="btn-danger" style="padding:5px 8px; margin:0;">-10</button></td></tr>`;
                 });
             });
             onSnapshot(collection(db, "promos"), (snapshot) => {
                 const list = document.getElementById('admin-promo-list'); list.innerHTML = '';
-                snapshot.forEach(d => { list.innerHTML += `<p style="background:rgba(255,255,255,0.03); padding:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center;"><b>${d.id}</b> - ${d.data().reward} Coin <button class="btn-danger" style="width:auto;margin:0;padding:5px 10px;" onclick="adminDelDoc('promos', '${d.id}')">Sil</button></p>`; });
+                snapshot.forEach(d => { list.innerHTML += `<div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:5px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;"><span><b>${d.id}</b> (${d.data().reward} C)</span> <button class="btn-danger" style="width:auto;margin:0;padding:5px 10px;" onclick="adminDelDoc('promos', '${d.id}')">Sil</button></div>`; });
             });
             onSnapshot(collection(db, "packages"), (snapshot) => {
                 const list = document.getElementById('admin-packages-list'); list.innerHTML = '';
-                snapshot.forEach(d => { list.innerHTML += `<p style="background:rgba(255,255,255,0.03); padding:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center;"><b>${d.data().name}</b> - ${d.data().coin} Coin <button class="btn-danger" style="width:auto;margin:0;padding:5px 10px;" onclick="adminDelDoc('packages', '${d.id}')">Sil</button></p>`; });
+                snapshot.forEach(d => { list.innerHTML += `<div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:5px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;"><span><b>${d.data().name}</b> (${d.data().coin} C)</span> <button class="btn-danger" style="width:auto;margin:0;padding:5px 10px;" onclick="adminDelDoc('packages', '${d.id}')">Sil</button></div>`; });
             });
             onSnapshot(collection(db, "products"), (snapshot) => {
                 const list = document.getElementById('admin-products-list'); list.innerHTML = '';
                 snapshot.forEach(docSnap => {
                     const p = docSnap.data();
-                    list.innerHTML += `<div style="background:rgba(255,255,255,0.03); padding:10px; margin-bottom:5px; border-radius:5px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;"><div><b>${p.name}</b> (${p.price}C)</div><div style="display:flex; gap:5px;"><button onclick="openEditProduct('${docSnap.id}')" style="background:#1976d2; padding:5px 10px; margin:0; width:auto;">Düzenle</button><button class="btn-danger" onclick="adminDelDoc('products', '${docSnap.id}')" style="padding:5px 10px; margin:0; width:auto;">Sil</button></div></div>`;
+                    list.innerHTML += `<div style="background:rgba(255,255,255,0.03); padding:10px; margin-bottom:8px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;"><div><b>${p.name}</b> (${p.price}C) - Kod: <span style="color:var(--primary)">${p.botCode||'Yok'}</span></div><div style="display:flex; gap:5px;"><button onclick="openEditProduct('${docSnap.id}')" style="background:#1976d2; padding:5px 10px; margin:0; width:auto;">Düzen</button><button class="btn-danger" onclick="adminDelDoc('products', '${docSnap.id}')" style="padding:5px 10px; margin:0; width:auto;">Sil</button></div></div>`;
                 });
             });
             onSnapshot(query(collection(db, "bot_responses"), orderBy("timestamp", "desc")), (snapshot) => {
