@@ -174,7 +174,6 @@
             <div class="header-right">
                 <button id="btn-vip-claim" onclick="claimWeeklyReward()" class="hidden btn-vip" style="box-shadow: 0 0 10px rgba(212,175,55,0.4);">🎁 Haftalık</button>
                 
-                <!-- BİLDİRİM BUTONU -->
                 <div class="notif-wrapper">
                     <button onclick="openNotifModal()" style="background:#333; padding:8px 12px;">🔔</button>
                     <span id="notif-badge" class="notif-badge">0</span>
@@ -434,7 +433,7 @@
         let currentUser = null;
         let allProducts = {};
         let currentModalProductId = null;
-        let isMaintenanceMode = false; 
+        let isMaintenanceMode = false;
 
         function checkMaintenance() {
             if(isMaintenanceMode && currentUser?.role !== 'admin') {
@@ -612,7 +611,6 @@
                     let stockText = p.stock === 'sinirsiz' ? 'Sınırsız' : `${p.stock} Adet`; let isOut = p.stock !== 'sinirsiz' && p.stock <= 0;
                     let stockBadge = `<div class="stock-badge ${isOut ? 'stock-out' : ''}">Stok: ${stockText}</div>`;
                     
-                    // DİNAMİK YILDIZ GÖSTERİMİ (KART ÜZERİNDE)
                     let starHtml = '';
                     if(p.reviews && p.reviews.length > 0) {
                         let total = p.reviews.reduce((sum, r) => sum + r.rating, 0);
@@ -622,7 +620,7 @@
 
                     let finalPrice = currentUser?.isVIP ? Math.floor(p.price * 0.9) : p.price;
                     let priceHTML = currentUser?.isVIP ? `<span class="old-price">${p.price} C</span> ${finalPrice} C` : `${finalPrice} C`;
-                    priceHTML += starHtml; // Fiyata yıldızı ekle
+                    priceHTML += starHtml; 
 
                     grid.innerHTML += `<div class="card" onclick="openProductDetailModal('${id}')">${stockBadge}${p.image ? `<img src="${p.image}">` : ''}<h3>${p.name}</h3><div class="card-desc-wrapper"><p class="card-desc">${displayDesc}</p>${readMoreLink}</div><div class="price">${priceHTML}</div><button onclick="event.stopPropagation(); buyProduct('${id}', false)" ${isOut ? 'disabled class="btn-secondary"' : ''}>${isOut ? 'Tükendi' : 'Satın Al'}</button></div>`;
                 });
@@ -634,7 +632,6 @@
             currentModalProductId = productId;
             document.getElementById('md-img').src = p.image || ''; document.getElementById('md-name').innerText = p.name;
             
-            // DİNAMİK YILDIZ GÖSTERİMİ (DETAY MODALINDA)
             let starHtml = '';
             if(p.reviews && p.reviews.length > 0) {
                 let total = p.reviews.reduce((sum, r) => sum + r.rating, 0);
@@ -747,7 +744,7 @@
             } catch (e) { alert("Saat sunucusuna bağlanılamadı. Lütfen internet bağlantınızı kontrol edip tekrar deneyin."); }
         };
 
-        // ARBYS BOT 
+        // ARBYS BOT
         let botState = 'idle'; let botContext = null;
         window.openArbysModal = () => {
             openModal('arbys-modal'); document.getElementById('chat-box').innerHTML = ''; botState = 'idle'; botContext = null;
@@ -828,6 +825,7 @@
             closeModal('promo-modal'); document.getElementById('promo-input').value = '';
         };
 
+        // KISIM 2: ADMIN PANELE VERİ YÜKLEME 
         function loadAdminData() {
             onSnapshot(collection(db, "users"), (snapshot) => {
                 const tbody = document.getElementById('admin-users-list'); tbody.innerHTML = '';
@@ -836,10 +834,14 @@
                     let roleStr = u.role === 'admin' ? '<span style="color:var(--primary); font-size:0.8rem;">(Admin)</span>' : '';
                     let vipStr = u.isVIP ? '👑' : '';
                     let vipAction = u.isVIP ? `<button onclick="adminRevokeVip('${docSnap.id}')" class="btn-danger" style="padding:5px 8px; margin:0; width:auto; font-size:0.75rem;">VIP Al</button>` : `<button onclick="adminMakeVip('${docSnap.id}')" class="btn-vip" style="padding:5px 8px; margin:0; width:auto; font-size:0.75rem;">VIP Yap</button>`;
+                    
                     tbody.innerHTML += `<tr>
                         <td>${vipStr} ${docSnap.id} ${roleStr}</td>
                         <td>${u.coins} C</td>
-                        <td style="display:flex; gap:5px;"><input type="number" id="mod-coin-${docSnap.id}" placeholder="Miktar" style="width:70px; padding:5px; margin:0;"><button onclick="adminCustomCoin('${docSnap.id}')" class="btn-success" style="padding:5px 8px; margin:0; width:auto;">Ekle</button></td>
+                        <td style="display:flex; gap:5px;">
+                            <input type="number" id="mod-coin-${docSnap.id}" placeholder="Miktar" style="width:70px; padding:5px; margin:0;">
+                            <button onclick="adminCustomCoin('${docSnap.id}')" class="btn-success" style="padding:5px 8px; margin:0; width:auto;">Ekle/Çıkar</button>
+                        </td>
                         <td style="display:flex; gap:5px; flex-wrap:wrap; align-items:center;">${u.isVIP ? 'VIP' : 'Normal'} ${vipAction}</td>
                     </tr>`;
                 });
@@ -864,7 +866,7 @@
                 snapshot.forEach(docSnap => {
                     const p = docSnap.data();
                     list.innerHTML += `<div style="background:rgba(255,255,255,0.03); padding:10px; margin-bottom:8px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                        <div><b>${p.name}</b> (${p.price}C) - Yorum: ${p.reviews ? p.reviews.length : 0}</div>
+                        <div><b>${p.name}</b> (${p.price}C)</div>
                         <div style="display:flex; gap:5px;">
                             <button onclick="openEditProduct('${docSnap.id}')" style="background:#1976d2; padding:5px 10px; margin:0; width:auto;">Düzenle</button>
                             <button class="btn-danger" onclick="adminDelDoc('products', '${docSnap.id}')" style="padding:5px 10px; margin:0; width:auto;">Sil</button>
