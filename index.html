@@ -62,7 +62,7 @@
         .card-desc-wrapper { position: relative; margin-bottom: 15px; flex-grow: 1; }
         .card-desc { color: #aaa; font-size: 0.85rem; line-height: 1.5; margin: 0; }
         .read-more-link { color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; margin-top: 5px; font-size: 0.85rem; }
-        .price { color: var(--accent); font-weight: bold; font-size: 1.3rem; margin-bottom: 15px; }
+        .price { color: var(--accent); font-weight: bold; font-size: 1.3rem; margin-bottom: 15px; display:flex; justify-content:center; align-items:center; }
         .old-price { text-decoration: line-through; color: #888; font-size: 0.9rem; margin-right: 5px; font-weight: normal; }
         .card > button { margin-top: auto; }
 
@@ -81,7 +81,7 @@
         .modal-body { padding: 20px; overflow-y: auto; flex-grow: 1; }
         .modal-body h2 { border: none; padding: 0; margin-bottom: 8px; }
         .modal-body .full-desc { color: #ccc; line-height: 1.6; font-size: 0.95rem; margin-bottom: 15px; }
-        .modal-body .price { font-size: 1.5rem; margin-bottom: 15px; }
+        .modal-body .price { font-size: 1.5rem; margin-bottom: 15px; display:flex; align-items:center; }
         
         .reviews-section { background: #151518; padding: 15px; border-radius: 10px; margin-top: 15px; border: 1px solid #333; }
         .review-item { border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px; }
@@ -378,7 +378,6 @@
         </div>
     </div>
 
-    <!-- Admin Yanıt Modalı -->
     <div id="admin-reply-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('admin-reply-modal')">&times;</span>
@@ -435,16 +434,14 @@
         let currentUser = null;
         let allProducts = {};
         let currentModalProductId = null;
-        let isMaintenanceMode = false; // YENİ: BAKIM MODU DEĞİŞKENİ
+        let isMaintenanceMode = false; 
 
-        // Bakım modu aktifse işlemleri iptal edip uyarı verecek ana fonksiyon
         function checkMaintenance() {
-            // Admin hariç herkese kısıtlama uygulanır
             if(isMaintenanceMode && currentUser?.role !== 'admin') {
                 alert("Site şu anda Bakım Molasında. Lütfen daha sonra tekrar deneyin.");
-                return true; // Bakım var, işlemi durdur
+                return true; 
             }
-            return false; // Bakım yok, işleme devam et
+            return false; 
         }
 
         function linkify(text) {
@@ -528,27 +525,14 @@
                 });
             });
 
-            // YENİ: BAKIM MODU DİNLEMESİ (Config/Global üzerinden)
             onSnapshot(doc(db, "config", "global"), (doc) => {
                 const b = document.getElementById('announcement-banner');
                 if(doc.exists() && doc.data().announcement) { 
                     const annText = doc.data().announcement;
-                    b.innerText = annText; 
-                    b.style.display = 'block'; 
-                    
-                    // Bakım Modu Tetikleyicisi
-                    if(annText === "Site Bakım Molasında") {
-                        isMaintenanceMode = true;
-                        b.classList.add('maintenance'); // Kırmızı yanıp sönen uyarı
-                    } else {
-                        isMaintenanceMode = false;
-                        b.classList.remove('maintenance');
-                    }
-
-                } else { 
-                    b.style.display = 'none'; 
-                    isMaintenanceMode = false;
-                }
+                    b.innerText = annText; b.style.display = 'block'; 
+                    if(annText === "Site Bakım Molasında") { isMaintenanceMode = true; b.classList.add('maintenance'); } 
+                    else { isMaintenanceMode = false; b.classList.remove('maintenance'); }
+                } else { b.style.display = 'none'; isMaintenanceMode = false; }
             });
 
             loadStore(); loadPackages();
@@ -627,9 +611,19 @@
                     }
                     let stockText = p.stock === 'sinirsiz' ? 'Sınırsız' : `${p.stock} Adet`; let isOut = p.stock !== 'sinirsiz' && p.stock <= 0;
                     let stockBadge = `<div class="stock-badge ${isOut ? 'stock-out' : ''}">Stok: ${stockText}</div>`;
+                    
+                    // DİNAMİK YILDIZ GÖSTERİMİ (KART ÜZERİNDE)
+                    let starHtml = '';
+                    if(p.reviews && p.reviews.length > 0) {
+                        let total = p.reviews.reduce((sum, r) => sum + r.rating, 0);
+                        let avg = (total / p.reviews.length).toFixed(1);
+                        starHtml = `<span style="color:gold; font-size:1rem; margin-left:8px;" title="${p.reviews.length} Değerlendirme">⭐ ${avg}</span>`;
+                    }
+
                     let finalPrice = currentUser?.isVIP ? Math.floor(p.price * 0.9) : p.price;
                     let priceHTML = currentUser?.isVIP ? `<span class="old-price">${p.price} C</span> ${finalPrice} C` : `${finalPrice} C`;
-                    
+                    priceHTML += starHtml; // Fiyata yıldızı ekle
+
                     grid.innerHTML += `<div class="card" onclick="openProductDetailModal('${id}')">${stockBadge}${p.image ? `<img src="${p.image}">` : ''}<h3>${p.name}</h3><div class="card-desc-wrapper"><p class="card-desc">${displayDesc}</p>${readMoreLink}</div><div class="price">${priceHTML}</div><button onclick="event.stopPropagation(); buyProduct('${id}', false)" ${isOut ? 'disabled class="btn-secondary"' : ''}>${isOut ? 'Tükendi' : 'Satın Al'}</button></div>`;
                 });
             });
@@ -639,8 +633,18 @@
             const p = allProducts[productId]; if(!p) return;
             currentModalProductId = productId;
             document.getElementById('md-img').src = p.image || ''; document.getElementById('md-name').innerText = p.name;
+            
+            // DİNAMİK YILDIZ GÖSTERİMİ (DETAY MODALINDA)
+            let starHtml = '';
+            if(p.reviews && p.reviews.length > 0) {
+                let total = p.reviews.reduce((sum, r) => sum + r.rating, 0);
+                let avg = (total / p.reviews.length).toFixed(1);
+                starHtml = `<span style="color:gold; font-size:1.2rem; margin-left:15px; text-shadow:0 0 5px rgba(255,215,0,0.5);">⭐ ${avg} <span style="font-size:0.9rem; color:#aaa;">(${p.reviews.length} Yorum)</span></span>`;
+            }
+
             let finalPrice = currentUser?.isVIP ? Math.floor(p.price * 0.9) : p.price;
-            document.getElementById('md-price-area').innerHTML = currentUser?.isVIP ? `<span class="old-price">${p.price} C</span> <span style="color:var(--accent)">${finalPrice} Coin</span>` : `<span style="color:var(--accent)">${finalPrice} Coin</span>`;
+            let priceAreaHTML = currentUser?.isVIP ? `<span class="old-price">${p.price} C</span> <span style="color:var(--accent)">${finalPrice} Coin</span>` : `<span style="color:var(--accent)">${finalPrice} Coin</span>`;
+            document.getElementById('md-price-area').innerHTML = priceAreaHTML + starHtml;
             document.getElementById('md-desc').innerText = p.desc || 'Açıklama yok.';
             
             const rList = document.getElementById('md-reviews-list'); rList.innerHTML = '';
@@ -667,7 +671,7 @@
         };
 
         window.buyProduct = async (prodId, isGift) => {
-            if(checkMaintenance()) return; // BAKIM KONTROLÜ
+            if(checkMaintenance()) return; 
             
             const p = allProducts[prodId]; if(!p) return;
             if(p.stock !== 'sinirsiz' && p.stock <= 0) return alert("Bu ürünün stoğu tükendi!");
@@ -712,14 +716,14 @@
         }
 
         window.activateItem = (code) => {
-            if(checkMaintenance()) return; // BAKIM KONTROLÜ
+            if(checkMaintenance()) return; 
             if(!code) return alert("Hata! Lütfen admin ile iletişime geçin.");
             alert(`Aktifleştirmek için Arbys Bota şu benzersiz kodu iletin:\n\nKOD: ${code}\n\nTamam'a bastığınızda bot açılacaktır.`);
             openArbysModal(); document.getElementById('bot-input').value = code;
         };
 
         window.claimWeeklyReward = async () => {
-            if(checkMaintenance()) return; // BAKIM KONTROLÜ
+            if(checkMaintenance()) return; 
             if(!currentUser.isVIP) return alert("Bu özellik sadece VIP üyelere özeldir.");
             try {
                 let now;
@@ -743,13 +747,12 @@
             } catch (e) { alert("Saat sunucusuna bağlanılamadı. Lütfen internet bağlantınızı kontrol edip tekrar deneyin."); }
         };
 
-        // --- ARBYS BOT (Bakım Kontrollü) ---
+        // ARBYS BOT 
         let botState = 'idle'; let botContext = null;
         window.openArbysModal = () => {
             openModal('arbys-modal'); document.getElementById('chat-box').innerHTML = ''; botState = 'idle'; botContext = null;
             document.getElementById('chat-input-area').classList.remove('hidden'); document.getElementById('chat-yesno-area').classList.add('hidden');
             
-            // BAKIM KONTROLÜ
             if(isMaintenanceMode && currentUser?.role !== 'admin') {
                 addBotMsg("⚠️ Sistem şu anda Bakım Molasında olduğu için işlemler durdurulmuştur.");
                 document.getElementById('chat-input-area').classList.add('hidden');
@@ -809,7 +812,7 @@
         };
 
         window.redeemPromo = async () => {
-            if(checkMaintenance()) return; // BAKIM KONTROLÜ
+            if(checkMaintenance()) return; 
             const code = document.getElementById('promo-input').value.trim(); if(!code) return;
             const pSnap = await getDoc(doc(db, "promos", code)); if(!pSnap.exists()) return alert("Kod geçersiz veya silinmiş.");
             const data = pSnap.data(); 
@@ -861,8 +864,11 @@
                 snapshot.forEach(docSnap => {
                     const p = docSnap.data();
                     list.innerHTML += `<div style="background:rgba(255,255,255,0.03); padding:10px; margin-bottom:8px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                        <div><b>${p.name}</b> (${p.price}C)</div>
-                        <div style="display:flex; gap:5px;"><button onclick="openEditProduct('${docSnap.id}')" style="background:#1976d2; padding:5px 10px; margin:0; width:auto;">Düzenle</button><button class="btn-danger" onclick="adminDelDoc('products', '${docSnap.id}')" style="padding:5px 10px; margin:0; width:auto;">Sil</button></div>
+                        <div><b>${p.name}</b> (${p.price}C) - Yorum: ${p.reviews ? p.reviews.length : 0}</div>
+                        <div style="display:flex; gap:5px;">
+                            <button onclick="openEditProduct('${docSnap.id}')" style="background:#1976d2; padding:5px 10px; margin:0; width:auto;">Düzenle</button>
+                            <button class="btn-danger" onclick="adminDelDoc('products', '${docSnap.id}')" style="padding:5px 10px; margin:0; width:auto;">Sil</button>
+                        </div>
                     </div>`;
                 });
             });
@@ -900,6 +906,21 @@
 
         window.adminRevokeVip = async (u) => { if(confirm(`${u} adlı kullanıcının VIP yetkisini iptal etmek istiyor musunuz?`)) await updateDoc(doc(db, "users", u), { isVIP: false, vipExpiry: null }); };
         window.adminMakeVip = async (u) => { if(confirm(`${u} adlı kullanıcıya anında 30 günlük VIP vermek istiyor musunuz?`)) await updateDoc(doc(db, "users", u), { isVIP: true, vipExpiry: Date.now() + (30 * 24 * 60 * 60 * 1000) }); };
+        
+        window.adminCustomCoin = async (username) => {
+            const input = document.getElementById(`mod-coin-${username}`);
+            if(!input) return;
+            const val = parseInt(input.value);
+            if(isNaN(val)) return alert("Lütfen geçerli bir sayı girin (örn: 50 veya -20).");
+            const ref = doc(db, "users", username); const snap = await getDoc(ref);
+            if(snap.exists()) { 
+                let nc = snap.data().coins + val; 
+                await updateDoc(ref, { coins: nc < 0 ? 0 : nc }); 
+                input.value = ''; 
+                alert(`${username} adlı kullanıcının bakiyesi güncellendi! Yeni Bakiye: ${nc < 0 ? 0 : nc} C`);
+            }
+        };
+
         function resizeImage(file, callback) { const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.onload = function() { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); let w = img.width, h = img.height; if (w > 400) { h *= 400 / w; w = 400; } canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h); callback(canvas.toDataURL('image/jpeg', 0.7)); }
         img.src = e.target.result; }
         reader.readAsDataURL(file); }
@@ -943,17 +964,13 @@
         window.adminAddCoinPackage = async () => { const n = document.getElementById('add-pkg-name').value; const c = parseInt(document.getElementById('add-pkg-coin').value); if(n && c) { await setDoc(doc(db, "packages", "pkg_"+Date.now()), { name: n, coin: c }); document.getElementById('add-pkg-name').value = ''; document.getElementById('add-pkg-coin').value = ''; } };
         window.adminDelDoc = async (col, id) => { if(confirm("Silmek istediğinize emin misiniz?")) await deleteDoc(doc(db, col, id)); };
         
-        // YENİ BAKIM MODU TETİKLEYİCİ
         window.adminSetAnnouncement = async () => { 
             const text = document.getElementById('add-announcement').value;
             await setDoc(doc(db, "config", "global"), { announcement: text }, { merge: true }); 
             document.getElementById('add-announcement').value = ''; 
             
-            if(text === "Site Bakım Molasında") {
-                alert("Site şu an itibariyle BAKIM MODUNA alındı. Kullanıcı işlemleri durduruldu.");
-            } else {
-                alert("Duyuru yayınlandı. Varsa bakım modu iptal edildi."); 
-            }
+            if(text === "Site Bakım Molasında") { alert("Site şu an itibariyle BAKIM MODUNA alındı. Kullanıcı işlemleri durduruldu."); } 
+            else { alert("Duyuru yayınlandı. Varsa bakım modu iptal edildi."); }
         };
 
     </script>
